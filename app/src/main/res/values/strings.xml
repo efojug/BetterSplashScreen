@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">BetterSplashScreen</string>
+    <string name="module_description">ColorOS 为所有应用强制使用默认遮罩</string>
+    <string name="module_status_title">模块启用状态</string>
+    <string name="module_enabled">已启用</string>
+    <string name="module_scope_missing">已启用，未选择系统界面作用域</string>
+    <string name="module_disconnected">未连接框架</string>
+    <string name="module_disconnected_detail">尚未收到框架服务连接。请确认模块已启用、框架支持 API 102</string>
+    <string name="hook_status_title">SystemUI Hook 状态</string>
+    <string name="hook_failed">Hook 失败</string>
+    <string name="hook_hit">安装成功 已命中</string>
+    <string name="hook_installed">安装成功 等待命中</string>
+    <string name="hook_checking">正在查询</string>
+    <string name="hook_unknown">未确认</string>
+    <string name="hook_hit_detail">Hook SystemUI 进程成功</string>
+    <string name="hook_installed_detail">核心 Hook 已安装。请启动其他应用以验证遮罩路径是否实际命中</string>
+    <string name="hook_checking_detail">正在等待当前 SystemUI 进程回传安装结果</string>
+    <string name="hook_unknown_detail">未收到当前 SystemUI 的状态回传。请确认系统界面作用域已选择，并在安装或更新模块后重启 SystemUI 或设备</string>
+    <string name="refresh_status">刷新状态</string>
+    <string name="refreshing_status">正在刷新…</string>
+</resources>

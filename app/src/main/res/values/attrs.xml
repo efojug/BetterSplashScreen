@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="SplashWindowEligibility">
+        <attr name="android:windowIsTranslucent" />
+        <attr name="android:windowIsFloating" />
+    </declare-styleable>
+</resources>
