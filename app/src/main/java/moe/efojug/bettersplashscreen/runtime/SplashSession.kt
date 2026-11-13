@@ -27,6 +27,7 @@ class SplashSession(
     val drawer: Any,
     val activity: ActivityInfo,
     val background: Int,
+    val originalType: Int,
     var defaultIconSize: Int = 0,
 ) {
     var shellBuilder: Any? = null

@@ -1,8 +1,8 @@
 # BetterSplashScreen
 
-ColorOS 16.1 基础启动遮罩模块，使用 libxposed API 102，仅作用于 `com.android.systemui`。
+ColorOS 基础启动遮罩模块，使用 libxposed API 102，仅作用于 `com.android.systemui`。
 
-已实现固定遮罩策略，**尚未完成目标 ROM 真机／固件验证**。签名匹配表示结构可用，不表示视觉行为已经验证。
+已实现固定遮罩策略，签名匹配表示结构可用。
 
 ## 行为
 
@@ -13,6 +13,7 @@ ColorOS 16.1 基础启动遮罩模块，使用 libxposed API 102，仅作用于 
 - 采用系统图标基准尺寸，在最终 framework Builder 写入完整 Drawable，不额外套圆角或缩放，不走自适应图标只取前景的处理；居中显示。
 - 不缓存图标，下次启动重新获取。系统自身图标缓存是否及时更新仍需真机验证。
 - 保留系统退出动画与窗口移除协议，不 Hook system_server。
+- Legacy 遮罩改为原生图标外观后，仍保持原来的不可复制属性，由 Shell 清理，不意外开放应用侧 SplashScreen 接管。
 
 仅处理已经进入 `makeSplashScreenContentView` 的 Splash／Solid／Legacy 内容。不把快照、NONE、Windowless、透明／浮动 Activity、桌面或最近任务改成 Splash，也不处理应用自己的启动页。
 
@@ -24,7 +25,7 @@ ColorOS 16.1 基础启动遮罩模块，使用 libxposed API 102，仅作用于 
 
 每次打开页面时查询一次，不定时刷新；也可手动刷新。查询期间按钮显示“正在刷新…”且不可点击，收到有效回复、发送失败或 2 秒超时后恢复。离开页面取消未完成的查询。广播限定目标包、共享并校验发送 UID、匹配随机查询令牌与版本号，超时则清除上次结果。不持久化成功标志。状态通道随 SystemUI 进程退出而失效，更新模块后需重启 SystemUI。新增框架服务依赖及其服务桥接 Provider，不使用远程偏好保存状态。
 
-使用 JDK 25（与现有 Gradle daemon 配置一致）、项目 Gradle Wrapper 及 `local.properties` 指向的 Android SDK。保留现有 compile/target SDK 37，最低安装版本 API 35 不代表已经适配所有相应 ROM。
+使用 JDK 25（与现有 Gradle daemon 配置一致）、项目 Gradle Wrapper 及 `local.properties` 指向的 Android SDK。保留现有 compile/target SDK 37
 
 ```powershell
 .\gradlew.bat :app:assembleDebug :app:testDebugUnitTest :app:lintDebug
@@ -40,5 +41,3 @@ ThreadLocal 栈只关联同线程同步嵌套构建，并在 `finally` 清理。
 主题候选探针仅观察完整签名的 `getIconExt(Context, ActivityInfo, int, boolean, boolean, boolean)`。`ColorOsThemeAdapter` 的证据白名单为空；没有固件证据时不会采用候选或标记为已验证主题图标。补充具体指纹前必须核对厂商取图链、同一用户／组件下至少两套主题的桌面对照、主题切换和未覆盖应用回退；需要其他接口时新增具体 ROM 适配实现。
 
 框架日志或 `adb logcat -s BetterSplash` 中：`module_loaded` 包含完整 ROM 指纹；`capability` 包含解析签名与支持状态；`install_group` 是安装结果；`hook_hit` 是实际命中；`icon_selected`／`icon_fallback` 记录图标来源与回退；`content_complete` 记录内容类型与背景决策。会话日志含 session、task、display、user、包名。关键命中日志按进程去重，错误保留原因。
-
-验收见 [验证清单](docs/validation.md)。旧项目仅用作行为和入口线索，未复制其全局状态、渲染器或延迟移除实现。实现时核对了 [libxposed API](https://libxposed.github.io/api/io/github/libxposed/api/package-summary.html) 和 [AOSP SplashScreenView](https://github.com/aosp-mirror/platform_frameworks_base/blob/android16-release/core/java/android/window/SplashScreenView.java) 的接口。

@@ -115,7 +115,7 @@ class ShellHookInstaller(
         if (!SplashPolicy.isSplash(originalType)) return chain.proceed()
         val drawer = chain.thisObject ?: return chain.proceed()
         val session = try {
-            createSession(drawer, chain.args[0] as Context, chain.args[1])
+            createSession(drawer, chain.args[0] as Context, chain.args[1], originalType)
         } catch (e: Exception) {
             log.once(
                 "identity_failure",
@@ -145,7 +145,7 @@ class ShellHookInstaller(
         }
     }
 
-    private fun createSession(drawer: Any, appContext: Context, info: Any): SplashSession? {
+    private fun createSession(drawer: Any, appContext: Context, info: Any, originalType: Int): SplashSession? {
         val flags = bindings.infoFields.getValue("startingWindowTypeParameter").getInt(info)
         if (flags and bindings.windowlessFlag != 0) return null
         val task = bindings.infoFields.getValue("taskInfo").get(info) ?: return null
@@ -192,7 +192,8 @@ class ShellHookInstaller(
             host,
             drawer,
             activity,
-            SplashPolicy.background(host.resources.configuration.uiMode)
+            SplashPolicy.background(host.resources.configuration.uiMode),
+            originalType
         )
     }
 
@@ -296,6 +297,10 @@ class ShellHookInstaller(
         // After failures must return the result already obtained, never call the original again.
         try {
             if (result is View && bindings.view.isInstance(result)) {
+                if (SplashPolicy.preventAppHandoff(session.originalType)) {
+                    bindings.setNotCopyable.invoke(result)
+                    log.info("event=handoff_policy decision=keep_shell_owner original_type=${session.originalType} ${session.identity.logFields()}")
+                }
                 views[result] = SplashTag(session.identity)
                 session.modified = true
                 HookStatusReporter.markHit()

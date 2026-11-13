@@ -10,6 +10,11 @@ enum class ShellWindowType(val value: Int) {
 }
 
 object SplashPolicy {
+    // Legacy overlays were never eligible for application-side SplashScreen API handoff.
+    // Changing their appearance must not silently change who owns removal of the window.
+    fun preventAppHandoff(originalType: Int): Boolean =
+        ShellWindowType.from(originalType) == ShellWindowType.LEGACY
+
     fun restoreType(original: Int): Int = when (ShellWindowType.from(original)) {
         ShellWindowType.LEGACY, ShellWindowType.SOLID_COLOR -> ShellWindowType.SPLASH.value
         else -> original

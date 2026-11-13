@@ -5,6 +5,13 @@ import org.junit.Assert.*
 import org.junit.Test
 
 class SplashPolicyTest {
+    @Test fun nativeAppearancePreservesLegacyRemovalOwnership() {
+        assertEquals(1, SplashPolicy.restoreType(4))
+        assertTrue(SplashPolicy.preventAppHandoff(4))
+        listOf(-1, 0, 1, 2, 3, 5, 99).forEach {
+            assertFalse(SplashPolicy.preventAppHandoff(it))
+        }
+    }
     @Test fun restoresOnlyExistingSplashVariants() {
         assertEquals(1, SplashPolicy.restoreType(3))
         assertEquals(1, SplashPolicy.restoreType(4))

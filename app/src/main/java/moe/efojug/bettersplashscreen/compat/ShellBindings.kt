@@ -23,6 +23,7 @@ data class ShellBindings(
     val vendorIconProbe: Method?,
     val packageContextAsUser: Method,
     val iconView: Method,
+    val setNotCopyable: Method,
     val drawerFields: Map<String, Field>,
     val shellFields: Map<String, Field>,
     val attrsFields: Map<String, Field>,
@@ -142,6 +143,7 @@ data class ShellBindings(
                     UserHandle::class.java
                 ),
                 iconView = ExactMembers.method(view, "getIconView", android.view.View::class.java),
+                setNotCopyable = ExactMembers.method(view, "setNotCopyable", void),
                 drawerFields = fields(
                     drawer,
                     false,
@@ -218,7 +220,8 @@ data class ShellBindings(
         vendorBackground,
         vendorIconProbe,
         packageContextAsUser,
-        iconView
+        iconView,
+        setNotCopyable
     ).map { it.toGenericString() } + listOf(
         drawerFields, shellFields, attrsFields, frameworkFields, infoFields, taskFields
     ).flatMap { it.values }.map { it.toGenericString() }
